@@ -26,8 +26,6 @@ class TestRegression(unittest.TestCase):
     _pgm= ".pgm"
     _out ="test/output/"
     _orig= "test/serial_version/map.pgm"
-  
-
 
     """
 	Assert for equality the pgm file

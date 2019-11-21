@@ -221,6 +221,18 @@ void update_outer_cells(int rank,int** smallmap_dims,int** old, int** new , int*
 }
 
 
+long map_sum(int rank,int** old,int** smallmap_dims){
+
+int i,j;
+long sum = 0 ; 
+
+    for(i=0; i<=smallmap_dims[rank][0]+1; i++)
+        for(j=0; j<=smallmap_dims[rank][1]+1; j++)
+            sum += old[i][j];
+
+return sum;
+
+}
 
 void update_maps(int rank, int** smallmap_dims,int** old, int** new){
 
@@ -236,11 +248,14 @@ void update_maps(int rank, int** smallmap_dims,int** old, int** new){
 }
 
 
-void print_changes(int step, int* nchange){
+void print_changes(int step, int* nchange, double average,int rank){
+    
     if (step % PRINT_FREQ == 0)
     {
         printf("percolate: number of changes on step %d is %d\n",
                step, *nchange);
+        if (rank==MASTER)
+            printf("Average is: %.3f\n",average); 
     }
 
 }

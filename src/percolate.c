@@ -26,7 +26,6 @@ void comm_config(int dims[N_DIMS], int period[N_DIMS])
     period[1] = 0;
 }
 
-
 int main(int argc, char *argv[])
 {
     /***********************************************************************/
@@ -38,9 +37,10 @@ int main(int argc, char *argv[])
     /***********************************************************************/
     int periods[N_DIMS];
     int dims[N_DIMS];
-
-    int itop, ibot, perc;
+   
     int nhole, step, nchange, stop;
+    long local_sum,global_sum;
+    double average;
 
     /***********************************************************************/
     /* GRIDS
@@ -176,8 +176,15 @@ int main(int argc, char *argv[])
         update_outer_cells(rank,smallmap_dims,old, new , &nchange);
         /***************************************** UPDATE HALO(OUTER) CELLS**************************************/
 
+        /***************************************** CALCULATE AVERAGE of MAP**************************************/
+        local_sum = map_sum(rank, new, smallmap_dims); 
 
-        print_changes(step,&nchange);
+        MPI_Reduce(&local_sum, &global_sum, 1, MPI_LONG, MPI_SUM, MASTER,comm2D);
+        if (rank==MASTER)
+            average =  (double) global_sum / (con.L*con.L); 
+
+        /***************************************** CALCULATE AVERAGE of MAP**************************************/
+        print_changes(step,&nchange,average,rank);
         update_maps(rank,smallmap_dims,old, new);   /*Copy new into old*/
         MPI_Allreduce(&nchange, &stop, 1, MPI_INT, MPI_SUM, comm2D);    /*Check for if loop converge*/
         step++;
@@ -202,12 +209,14 @@ int main(int argc, char *argv[])
  /************************************FINISH GATHERING****************************************************************/
 
 
-/************************************PERCOLATION & PRINT INTO FILE***************************************************/
-    printf("STEPS%d", step);
+/************************************************** STATISTICS *******************************************************/
+    MPI_Barrier(comm2D);
+    printf("\n-------------------TIME STATISTICS----------------------\n");
+    printf("STEPS are %d Average is %.3f\n", step,average);
     TIMER_stop(TIMER_TOTAL);
     TIMER_dump(comm2D,rank,size,step);
     MPI_Finalize();
-/************************************FINISH PRINTING ****************************************************************/
+/************************************************** STATISTICS *******************************************************/
 
     return 0;
 }

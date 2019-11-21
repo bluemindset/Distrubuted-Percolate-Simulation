@@ -96,7 +96,7 @@ void TIMER_stop(const int t_id) {
 void TIMER_dump( MPI_Comm comm, int rank, int size,int steps) {
 
   int    n;
-  double t_min, t_max, t_sum, t_step;
+  double t_min, t_max, t_avg, t_step;
 
   for (n = 0; n < TIMERS; n++) {
 
@@ -104,16 +104,15 @@ void TIMER_dump( MPI_Comm comm, int rank, int size,int steps) {
       if ( timer[n].active == 0 ) {
           t_min = timer[n].t_min;
           t_max = timer[n].t_max;
-          t_sum = timer[n].t_sum;
+          t_avg = timer[n].t_sum;
 
-
+          MPI_Reduce(&(timer[n].t_sum), &t_avg, 1, MPI_DOUBLE, MPI_SUM, 0, comm);
           MPI_Reduce(&(timer[n].t_min), &t_min, 1, MPI_DOUBLE, MPI_MIN, 0, comm);
           MPI_Reduce(&(timer[n].t_max), &t_max, 1, MPI_DOUBLE, MPI_MAX, 0, comm);
-          MPI_Reduce(&(timer[n].t_sum), &t_sum, 1, MPI_DOUBLE, MPI_SUM, 0, comm);
 
-          t_sum /= size;
+          t_avg /= size;
           t_step= (t_max/(double)steps);
-          printf("\nrank  %d, %20s: %10.3f %10.3f %10.3f %10.3f\n", rank, timer_name[n], t_min, t_max, t_sum,t_step);
+          printf("RANK  %d, %.20s MIN: %2.3f MAX: %2.3f AVG: %2.3f STEP: %2.5f\n", rank, timer_name[n], t_min, t_max, t_avg,t_step);
 
       }
   }

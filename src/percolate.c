@@ -1,9 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <mpi.h>
-#include <curses.h>
 #include <math.h>
-#include <assert.h>
 #include <getopt.h>
 #include "arralloc.h"
 #include "configuration.h"
@@ -37,11 +35,11 @@ int main(int argc, char *argv[])
     /***********************************************************************/
     int periods[N_DIMS];
     int dims[N_DIMS];
-   
-    int nhole, step, nchange, stop;
-    long local_sum,global_sum;
-    double average;
 
+    int nhole, step, nchange, stop;
+    long local_sum, global_sum;
+    double average;
+    int total_req = 0 ; /*Total Requests*/
     /***********************************************************************/
     /* GRIDS
     /***********************************************************************/
@@ -55,7 +53,9 @@ int main(int argc, char *argv[])
     /***********************************************************************/
     /* MPI Communication Initialization * Dimensions
     /***********************************************************************/
-
+    configure con;
+    get_input(&con, argc, argv);
+    
     MPI_Comm comm2D;
     /*Give birth to the Universe */
     MPI_Init(NULL, NULL);
@@ -69,19 +69,30 @@ int main(int argc, char *argv[])
     /*Find the rank*/
     MPI_Comm_rank(comm2D, &rank);
 
+    printf("%d, %d",dims[0],dims[1]);
     /***********************************************************************/
     /* Gather Configuration
     /***********************************************************************/
-    configure con;
-    get_input(&con, argc, argv);
-
+    
+    /***********************************************************************/
+    /*Requests & Status
+    /***********************************************************************/
+    MPI_Request *requests = NULL ;
+    requests = (MPI_Request *) malloc(sizeof(MPI_Request *) * (con.L * con.L ));
+    MPI_Status *status = NULL;
+    status = (MPI_Status *) malloc(sizeof(MPI_Status *) * (con.L * con.L));
+    MPI_Request  halo_send_requests[SHALLOW_HALO];
+    MPI_Request  halo_recv_requests[SHALLOW_HALO];
+    MPI_Status   halo_send_status[SHALLOW_HALO];
+    MPI_Status   halo_recv_status[SHALLOW_HALO];
     /***********************************************************************/
     /* Initialize Maps
     /***********************************************************************/
-    map =(int **) arralloc(sizeof(int), 2, con.L, con.L);
-    smallmap_dims =(int **) arralloc(sizeof(int), 2, size, 2);
+    map = (int **) arralloc(sizeof(int), 2, con.L, con.L);
+    smallmap_dims = (int **) arralloc(sizeof(int), 2, size, 2);
 
-    if (rank==MASTER) {
+    if (rank == MASTER)
+    {
         printf("percolate: params are L = %d, rho = %f, seed = %d\n", con.L, con.rho, con.seed);
     }
     rinit(con.seed);
@@ -98,38 +109,30 @@ int main(int argc, char *argv[])
 
     /************************************************/
 
-    /*Total Requests*/
-    int total_req = 0 ;
-    /***********************************************************************/
-    /*Requests & Status
-    /***********************************************************************/
-    MPI_Request* requests = NULL ;
-    requests =(MPI_Request  *) malloc(sizeof(MPI_Request*) * (con.L*con.L ));
-    MPI_Status* status = NULL;
-    status =(MPI_Status  *) malloc(sizeof(MPI_Status*) * (con.L*con.L));
 
 
     /******************************************Initialize MAP DENSITY**************************************************/
     if (rank == MASTER)
-        init_density(&con,map,&nhole);
+        init_density(&con, map, &nhole);
     MPI_Barrier(comm2D);
     /******************************************Initialize MAP DENSITY**************************************************/
 
 
     /******************************************Initialize SMALL MAP****************************************************/
     bounds b ;
-    find_bounds(rank, &b, dims,&con);
+    find_bounds(rank, &b, dims, &con);
     smallmap = (int **) arralloc(sizeof(int), 2, b.deltaH, b.deltaW);
     /******************************************Initialize SMALL MAP****************************************************/
 
 
     /***************************************************SCATTER********************************************************/
-    if (rank == MASTER) {
-        init_rank_zero(&con, smallmap,smallmap_dims,map,dims,&b);
-        scatter_master(size,dims, &con, map, &comm2D, requests,status,&b);
+    if (rank == MASTER)
+    {
+        init_rank_zero(&con, smallmap, smallmap_dims, map, dims, &b);
+        scatter_master(size, dims, &con, map, &comm2D, requests, status, &b);
     }
     else
-        scatter_worker(rank,smallmap,smallmap_dims, &comm2D, requests,status,&b);
+        scatter_worker(rank, smallmap, smallmap_dims, &comm2D, requests, status, &b);
     /***************************************************SCATTER********************************************************/
 
 
@@ -138,7 +141,7 @@ int main(int argc, char *argv[])
     old = (int **) arralloc(sizeof(int), 2, smallmap_dims[rank][0] + 2, smallmap_dims[rank][1] + 2);
     new = (int **) arralloc(sizeof(int), 2, smallmap_dims[rank][0] + 2, smallmap_dims[rank][1] + 2);
 
-    init_old_map(rank, smallmap_dims, smallmap,old);
+    init_old_map(rank, smallmap_dims, smallmap, old);
 
     /********************************************INITIALIZE OLD & NEW MAPS*********************************************/
 
@@ -150,19 +153,16 @@ int main(int argc, char *argv[])
     while (stop != 0)
     {
         nchange = 0;
-        MPI_Request  halo_send_requests[4];
-        MPI_Request  halo_recv_requests[4];
-        MPI_Status   halo_send_status[4];
-        MPI_Status   halo_recv_status[4];
+
 
         /**************************************** START HALO EXCHANGE ******************************************/
-        start_halo_exchange(rank, halo_send_requests,halo_recv_requests,halo_send_status,halo_recv_status,
-                            &comm2D,smallmap_dims,old);
+        start_halo_exchange(rank, halo_send_requests, halo_recv_requests, halo_send_status, halo_recv_status,
+                            &comm2D, smallmap_dims, old);
         /**************************************** START HALO EXCHANGE ******************************************/
 
 
         /***************************************** UPDATE INNER CELLS ******************************************/
-         update_inner_cells(rank, smallmap_dims,old,new,&nchange);
+        update_inner_cells(rank, smallmap_dims, old, new, &nchange);
         /***************************************** UPDATE INNER CELLS ******************************************/
 
 
@@ -173,50 +173,54 @@ int main(int argc, char *argv[])
 
 
         /***************************************** UPDATE HALO(OUTER) CELLS**************************************/
-        update_outer_cells(rank,smallmap_dims,old, new , &nchange);
+        update_outer_cells(rank, smallmap_dims, old, new, &nchange);
         /***************************************** UPDATE HALO(OUTER) CELLS**************************************/
 
         /***************************************** CALCULATE AVERAGE of MAP**************************************/
-        local_sum = map_sum(rank, new, smallmap_dims); 
-
-        MPI_Reduce(&local_sum, &global_sum, 1, MPI_LONG, MPI_SUM, MASTER,comm2D);
-        if (rank==MASTER)
-            average =  (double) global_sum / (con.L*con.L); 
-
+        local_sum = map_sum(rank, new, smallmap_dims);
+        MPI_Allreduce(&local_sum, &global_sum, 1, MPI_LONG, MPI_SUM, comm2D);
+        average =  (double) global_sum / (con.L * con.L);
         /***************************************** CALCULATE AVERAGE of MAP**************************************/
-        print_changes(step,&nchange,average,rank);
-        update_maps(rank,smallmap_dims,old, new);   /*Copy new into old*/
+
+        print_changes(step, &nchange, average, rank); /*Print number of changes and average*/
+        update_maps(rank, smallmap_dims, old, new); /*Copy new into old*/
+
+        /***************************************** STOPPING CRETIRION**************************************/
         MPI_Allreduce(&nchange, &stop, 1, MPI_INT, MPI_SUM, comm2D);    /*Check for if loop converge*/
         step++;
+        /***************************************** STOPPING CRETIRION **************************************/
 
     }
 
     TIMER_stop(TIMER_UPDATE);
-    TIMER_dump(comm2D,rank,size,step);
-/***********************************************UPDATE*****************************************************************/
+    //TIMER_dump(comm2D, rank, size, step);
+    /***********************************************UPDATE*****************************************************************/
 
-    update_center_map(rank,smallmap,smallmap_dims,old);
+    update_small_map(rank, smallmap, smallmap_dims, old);
 
-/***************************************GATHERING & WRITING INTO FILE *************************************************/
-    if (rank == MASTER) {
+    /***************************************GATHERING & WRITING INTO FILE *************************************************/
+    if (rank == MASTER)
+    {
         gather_master(size, dims, map, smallmap, &comm2D, &con, requests, status);
         write_map_file(map, &con);
-        percwrite("map.pgm", map,con.L, con.max_clusters);
+        percwrite("map.pgm", map, con.L, con.max_clusters);
     }
     else
-        gather_worker( rank, smallmap_dims,smallmap, &comm2D,
-             requests,status);
- /************************************FINISH GATHERING****************************************************************/
+        gather_worker( rank, smallmap_dims, smallmap, &comm2D,
+                       requests, status);
+    /************************************FINISH GATHERING****************************************************************/
 
 
-/************************************************** STATISTICS *******************************************************/
+    /************************************************** STATISTICS *******************************************************/
     MPI_Barrier(comm2D);
+
+  
     printf("\n-------------------TIME STATISTICS----------------------\n");
-    printf("STEPS are %d Average is %.3f\n", step,average);
+    printf("STEPS are %d Average is %.3f\n", step, average);
     TIMER_stop(TIMER_TOTAL);
-    TIMER_dump(comm2D,rank,size,step);
+    TIMER_dump(comm2D, rank, size, step);
     MPI_Finalize();
-/************************************************** STATISTICS *******************************************************/
+    /************************************************** STATISTICS *******************************************************/
 
     return 0;
 }

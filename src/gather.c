@@ -5,9 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <mpi.h>
-#include <curses.h>
 #include <math.h>
-#include <assert.h>
 #include <getopt.h>
 #include "arralloc.h"
 #include "configuration.h"

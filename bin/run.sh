@@ -6,7 +6,7 @@ typeset -A con
 con=( 
     [size_l]=50
     [rho]=0.5
-    [seed]=1000
+    [seed]=288
     [max_clusters]=50
     [pgm_file]=map.pgm
     [nproc]=1

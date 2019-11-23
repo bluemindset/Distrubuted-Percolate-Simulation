@@ -34,7 +34,7 @@ void update_maps(int rank, int** smallmap_dims,int** old, int** new);
 
 void print_changes(int step, int* nchange, double average,int rank);
 
-void update_center_map(int rank,int** smallmap, int** smallmap_dims,int** old);
+void update_small_map(int rank,int** smallmap, int** smallmap_dims,int** old);
 
 void find_bounds(int rank, bounds *b, int dims[2],configure* con);
 void write_map_file(int** map,configure* con);

@@ -1,4 +1,3 @@
-#include <assert.h>
 #include <time.h>
 #include <float.h>
 #include <mpi.h>
@@ -11,8 +10,7 @@
 struct timer_struct {
   double          t_start;
   double          t_sum;
-  double          t_max;
-  double          t_min;
+  double          t_elapsed;
   unsigned int    active;
 };
 
@@ -21,11 +19,11 @@ static struct timer_struct timer[TIMERS];
 
 static const char * timer_name[] = {"Total Time","Update Time"};
 
-double dmin(const double a, const double b) {
+double find_min(const double a, const double b) {
     return ((a < b) ? a : b);
 }
 
-double dmax(const double a, const double b) {
+double find_max(const double a, const double b) {
     return ((a > b) ? a : b);
 }
 
@@ -34,9 +32,9 @@ int TIMER_init() {
 
   int n;
   for (n = 0; n < TIMERS; n++) {
+    timer[n].t_start  = 0.0;
     timer[n].t_sum  = 0.0;
-    timer[n].t_max  = FLT_MIN;
-    timer[n].t_min  = FLT_MAX;
+    timer[n].t_elapsed  = 0.0;
     timer[n].active = 0;
   }
 
@@ -77,8 +75,8 @@ void TIMER_stop(const int t_id) {
     t_elapse = MPI_Wtime() - timer[t_id].t_start;
 
     timer[t_id].t_sum += t_elapse;
-    timer[t_id].t_max  = dmax(timer[t_id].t_max, t_elapse);
-    timer[t_id].t_min  = dmin(timer[t_id].t_min, t_elapse);
+    timer[t_id].t_elapsed = t_elapse;
+
     timer[t_id].active = 0;
   }
 
@@ -96,19 +94,19 @@ void TIMER_stop(const int t_id) {
 void TIMER_dump( MPI_Comm comm, int rank, int size,int steps) {
 
   int    n;
-  double t_min, t_max, t_avg, t_step;
+  double t_elapsed, t_min, t_max, t_avg, t_step;
 
   for (n = 0; n < TIMERS; n++) {
-
-    /* Report the stats for active timers */
       if ( timer[n].active == 0 ) {
-          t_min = timer[n].t_min;
-          t_max = timer[n].t_max;
-          t_avg = timer[n].t_sum;
 
+          t_elapsed = timer[n].t_elapsed;
+          t_avg = timer[n].t_sum;
+          t_min = t_elapsed;
+          t_max = t_elapsed;
+          
           MPI_Reduce(&(timer[n].t_sum), &t_avg, 1, MPI_DOUBLE, MPI_SUM, 0, comm);
-          MPI_Reduce(&(timer[n].t_min), &t_min, 1, MPI_DOUBLE, MPI_MIN, 0, comm);
-          MPI_Reduce(&(timer[n].t_max), &t_max, 1, MPI_DOUBLE, MPI_MAX, 0, comm);
+          MPI_Reduce(&(timer[n].t_elapsed), &t_min, 1, MPI_DOUBLE, MPI_MIN, 0, comm);
+          MPI_Reduce(&(timer[n].t_elapsed), &t_max, 1, MPI_DOUBLE, MPI_MAX, 0, comm);
 
           t_avg /= size;
           t_step= (t_max/(double)steps);

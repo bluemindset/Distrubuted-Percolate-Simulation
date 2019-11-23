@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><testsuite errors="0" failures="0" name="pytest" skips="0" tests="1" time="0.643"><testcase classname="test.test_regression.TestRegression" file="test/test_regression.py" line="34" name="test_pgm_file" time="0.628565311432"><system-out>map1.pgm
+<?xml version="1.0" encoding="utf-8"?><testsuite errors="0" failures="0" name="pytest" skips="0" tests="1" time="0.868"><testcase classname="test.test_regression.TestRegression" file="test/test_regression.py" line="32" name="test_pgm_file" time="0.654293775558"><system-out>map1.pgm
 map2.pgm
 map3.pgm
 map4.pgm

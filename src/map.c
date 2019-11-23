@@ -1,9 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <mpi.h>
-#include <curses.h>
 #include <math.h>
-#include <assert.h>
 #include <getopt.h>
 #include "arralloc.h"
 #include "configuration.h"
@@ -252,15 +250,14 @@ void print_changes(int step, int* nchange, double average,int rank){
     
     if (step % PRINT_FREQ == 0)
     {
-        printf("percolate: number of changes on step %d is %d\n",
-               step, *nchange);
-        if (rank==MASTER)
-            printf("Average is: %.3f\n",average); 
+        printf("Rank %d percolate: number of changes on step %d is %d\n",
+               rank, step, *nchange);
+        printf("Average is: %.3f\n",average); 
     }
 
 }
 
-void update_center_map(int rank,int** smallmap, int** smallmap_dims,int** old){
+void update_small_map(int rank,int** smallmap, int** smallmap_dims,int** old){
     int i,j;
     for (i = 1; i <= smallmap_dims[rank][0]; i++)
     {

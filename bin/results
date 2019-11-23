@@ -1,0 +1,76 @@
+Setting grid to mpirun "," 
+
+
+==================Start===================
+
+2, 1percolate: params are L = 5000, rho = 0.500000, seed = 1564
+percolate: rho = 0.500000, actual density = 0.499898
+2, 1Rank 1 percolate: number of changes on step 100 is 1919
+Average is: 3139519.757
+Rank 0 percolate: number of changes on step 100 is 1765
+Average is: 3139519.757
+percolate: cluster DOES NOT percolate
+percwrite: only visualising the largest cluster
+percwrite: maximum cluster size is 851
+percwrite: opening file <map.pgm>
+percwrite: writing data ...
+percwrite: ... done
+percwrite: file closed
+
+-------------------TIME STATISTICS----------------------
+STEPS are 198 Average is 3139523.570
+
+-------------------TIME STATISTICS----------------------
+STEPS are 198 Average is 3139523.570
+RANK  1, Total Time MIN: 54.576 MAX: 54.576 AVG: 27.288 STEP: 0.27564
+RANK  1, Update Time MIN: 50.738 MAX: 50.738 AVG: 25.369 STEP: 0.25625
+RANK  0, Total Time MIN: 54.576 MAX: 54.576 AVG: 54.576 STEP: 0.27564
+RANK  0, Update Time MIN: 50.738 MAX: 50.738 AVG: 50.738 STEP: 0.25625
+
+==========Repetition 1 finished========
+
+Setting grid to mpirun "," 
+
+
+==================Start===================
+
+2, 2percolate: params are L = 5000, rho = 0.500000, seed = 1564
+percolate: rho = 0.500000, actual density = 0.499898
+2, 2Rank 1 percolate: number of changes on step 100 is 555
+Average is: 3139519.757
+2, 2Rank 2 percolate: number of changes on step 100 is 1032
+Average is: 3139519.757
+2, 2Rank 3 percolate: number of changes on step 100 is 887
+Average is: 3139519.757
+Rank 0 percolate: number of changes on step 100 is 1210
+Average is: 3139519.757
+percolate: cluster DOES NOT percolate
+percwrite: only visualising the largest cluster
+percwrite: maximum cluster size is 851
+percwrite: opening file <map.pgm>
+percwrite: writing data ...
+percwrite: ... done
+percwrite: file closed
+
+-------------------TIME STATISTICS----------------------
+STEPS are 198 Average is 3139523.570
+RANK  3, Total Time MIN: 49.069 MAX: 49.069 AVG: 12.267 STEP: 0.24782
+RANK  3, Update Time MIN: 42.395 MAX: 42.395 AVG: 10.599 STEP: 0.21412
+
+
+-------------------TIME STATISTICS----------------------
+STEPS are 198 Average is 3139523.570
+RANK  2, Total Time MIN: 49.069 MAX: 49.069 AVG: 12.267 STEP: 0.24782
+RANK  2, Update Time MIN: 42.396 MAX: 42.396 AVG: 10.599 STEP: 0.21412
+
+-------------------TIME STATISTICS----------------------
+STEPS are 198 Average is 3139523.570
+-------------------TIME STATISTICS----------------------
+STEPS are 198 Average is 3139523.570
+RANK  1, Total Time MIN: 49.069 MAX: 49.069 AVG: 12.267 STEP: 0.24782
+RANK  1, Update Time MIN: 42.396 MAX: 42.396 AVG: 10.599 STEP: 0.21412
+RANK  0, Total Time MIN: 49.069 MAX: 49.069 AVG: 49.069 STEP: 0.24782
+RANK  0, Update Time MIN: 42.395 MAX: 42.396 AVG: 42.396 STEP: 0.21412
+
+==========Repetition 1 finished========
+

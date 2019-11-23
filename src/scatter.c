@@ -4,9 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <mpi.h>
-#include <curses.h>
 #include <math.h>
-#include <assert.h>
 #include <getopt.h>
 #include "arralloc.h"
 #include "configuration.h"
@@ -18,13 +16,13 @@
 #include "scatter.h"
 #include "map.h"
 
-void scatter_master(int size,int dims[N_DIMS], configure *con, int** map, MPI_Comm* comm2D, MPI_Request* requests,MPI_Status* status,bounds *b){
+void scatter_master(int size, int dims[N_DIMS], configure *con, int **map, MPI_Comm *comm2D, MPI_Request *requests, MPI_Status *status, bounds *b)
+{
     int total_req = 0;
-    int rk,i,k;
+    int rk, i, k;
     for (rk = 1; rk < size; rk++)
-
     {
-        find_bounds(rk, b, dims,con);
+        find_bounds(rk, b, dims, con);
         MPI_Datatype colType;
 
         MPI_Type_vector(b->deltaH, 1, con->L, MPI_INT, &colType);
@@ -41,8 +39,9 @@ void scatter_master(int size,int dims[N_DIMS], configure *con, int** map, MPI_Co
     MPI_Waitall(total_req, requests, status);
 }
 
-void scatter_worker(int rank, int** smallmap,int** smallmap_dims, MPI_Comm* comm2D, MPI_Request* requests,MPI_Status* status,bounds *b){
-    int i,total_req = 0;
+void scatter_worker(int rank, int **smallmap, int **smallmap_dims, MPI_Comm *comm2D, MPI_Request *requests, MPI_Status *status, bounds *b)
+{
+    int i, total_req = 0;
 
 
     MPI_Datatype colType;
@@ -52,8 +51,6 @@ void scatter_worker(int rank, int** smallmap,int** smallmap_dims, MPI_Comm* comm
 
     MPI_Type_vector(b->deltaH, 1, b->deltaW, MPI_INT, &colType);
     MPI_Type_commit(&colType);
-
-
 
     for(i = 0; i < b->deltaW; i++)
     {

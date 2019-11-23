@@ -1,7 +1,7 @@
 #B159973 - Programming Skills - 2019
 #Variables of the Makefile
 CC =     mpicc
-CFLAGS = -g 
+CFLAGS = -g
 LDFLAGS = -lm
 OBJ_DIR = obj/
 SRC_DIR = src/

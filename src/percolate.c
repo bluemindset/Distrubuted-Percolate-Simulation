@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
     stop = 1;
 
     TIMER_start(TIMER_UPDATE);
-    while (stop != 0)
+    while (step != 2)
     {
         nchange = 0;
 
@@ -193,7 +193,7 @@ int main(int argc, char *argv[])
     }
 
     TIMER_stop(TIMER_UPDATE);
-    //TIMER_dump(comm2D, rank, size, step);
+    TIMER_dump(comm2D, rank, size, step);
     /***********************************************UPDATE*****************************************************************/
 
     update_small_map(rank, smallmap, smallmap_dims, old);

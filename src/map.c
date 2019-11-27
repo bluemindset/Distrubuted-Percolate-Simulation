@@ -87,12 +87,6 @@ void init_smallmap(configure *con,int** smallmap,int** smallmap_dims,int** map,i
     }
 }
 
-
-
-
-/* Initialise the old array: copy the LxL array map to the centre of
-* old, and set the halo values to zero.
-*/
 void init_old_map(int rank, int** smallmap_dims, int** smallmap, int** old){
     int i,j;
     for (i = 1; i <= smallmap_dims[rank][0]; i++)
@@ -123,11 +117,13 @@ void start_halo_exchange(int rank, MPI_Request*  send_requests, MPI_Request*  re
     MPI_Datatype colTypeN;
     MPI_Datatype rowTypeN;
 
+    /*Find neighbors*/
     MPI_Cart_shift( *comm2D, ZERO_DIM, 1, &up, &down);
     MPI_Cart_shift( *comm2D, FIRST_DIM, 1, &left, &right);
+    
+    /*Create vectors and commit them*/
     MPI_Type_vector(smallmap_dims[rank][0], 1, smallmap_dims[rank][1] + 2, MPI_INT, &colTypeN);
     MPI_Type_vector(1, smallmap_dims[rank][1], smallmap_dims[rank][1] + 2, MPI_INT, &rowTypeN);
-
     MPI_Type_commit(&colTypeN);
     MPI_Type_commit(&rowTypeN);
 

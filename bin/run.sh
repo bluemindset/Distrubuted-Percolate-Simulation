@@ -1,5 +1,9 @@
 #!/bin/bash
-#B159973 - Programming Skills - 2019
+
+# @Author: B159973
+# @Date:   26/11/2019
+# @Course: MPP - 2019
+# @University of Edinburgh
 
 typeset -A con
 #DEFAULT values.If not specifing in the perc.conf the value that you want.

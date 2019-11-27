@@ -1,3 +1,10 @@
+/**
+ * @Author: B159973
+ * @Date:   26/11/2019
+ * @Course: MPP - 2019
+ * @University of Edinburgh
+*/
+/*========================== Library Files ===========================*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <mpi.h>
@@ -6,7 +13,7 @@
 #include "arralloc.h"
 #include "configuration.h"
 #include "userInput.h"
-#include "percolate.h"
+#include "main.h"
 #include "timer.h"
 #include "arralloc.h"
 #include "allocs.h"
@@ -14,10 +21,11 @@
 #include "gather.h"
 #include "map.h"
 #include "percwrite.h"
+/*====================================================================*/
 
 void comm_config(int dims[N_DIMS], int period[N_DIMS])
 {
-    /*Create Cartesian Topology*/
+    /*Configure Cartesian Topology*/
     dims[0] = 0;
     dims[1] = 0;
     period[0] = 1;
@@ -55,7 +63,7 @@ int main(int argc, char *argv[])
     /***********************************************************************/
     configure con;
     get_input(&con, argc, argv);
-    
+
     MPI_Comm comm2D;
     /*Give birth to the Universe */
     MPI_Init(NULL, NULL);
@@ -69,11 +77,11 @@ int main(int argc, char *argv[])
     /*Find the rank*/
     MPI_Comm_rank(comm2D, &rank);
 
-    printf("%d, %d",dims[0],dims[1]);
+    printf("%d, %d", dims[0], dims[1]);
     /***********************************************************************/
     /* Gather Configuration
     /***********************************************************************/
-    
+
     /***********************************************************************/
     /*Requests & Status
     /***********************************************************************/
@@ -149,17 +157,20 @@ int main(int argc, char *argv[])
     step = 1;
     stop = 1;
 
+    /* Start the timer*/
+    MPI_Barrier(comm2D);
     TIMER_start(TIMER_UPDATE);
-    while (step != 2)
+    
+    while (stop != 0)
     {
         nchange = 0;
+        local_sum = 0 ;
 
 
         /**************************************** START HALO EXCHANGE ******************************************/
         start_halo_exchange(rank, halo_send_requests, halo_recv_requests, halo_send_status, halo_recv_status,
                             &comm2D, smallmap_dims, old);
         /**************************************** START HALO EXCHANGE ******************************************/
-
 
         /***************************************** UPDATE INNER CELLS ******************************************/
         update_inner_cells(rank, smallmap_dims, old, new, &nchange);
@@ -177,13 +188,12 @@ int main(int argc, char *argv[])
         /***************************************** UPDATE HALO(OUTER) CELLS**************************************/
 
         /***************************************** CALCULATE AVERAGE of MAP**************************************/
-        local_sum = map_sum(rank, new, smallmap_dims);
+        local_sum = update_maps(rank, smallmap_dims, old, new); /*Copy new into old*/
         MPI_Allreduce(&local_sum, &global_sum, 1, MPI_LONG, MPI_SUM, comm2D);
         average =  (double) global_sum / (con.L * con.L);
         /***************************************** CALCULATE AVERAGE of MAP**************************************/
 
         print_changes(step, &nchange, average, rank); /*Print number of changes and average*/
-        update_maps(rank, smallmap_dims, old, new); /*Copy new into old*/
 
         /***************************************** STOPPING CRETIRION**************************************/
         MPI_Allreduce(&nchange, &stop, 1, MPI_INT, MPI_SUM, comm2D);    /*Check for if loop converge*/
@@ -191,11 +201,13 @@ int main(int argc, char *argv[])
         /***************************************** STOPPING CRETIRION **************************************/
 
     }
-
+    
+    /* Stop the timer*/
+    MPI_Barrier(comm2D);
     TIMER_stop(TIMER_UPDATE);
     TIMER_dump(comm2D, rank, size, step);
     /***********************************************UPDATE*****************************************************************/
-
+    
     update_small_map(rank, smallmap, smallmap_dims, old);
 
     /***************************************GATHERING & WRITING INTO FILE *************************************************/
@@ -214,7 +226,7 @@ int main(int argc, char *argv[])
     /************************************************** STATISTICS *******************************************************/
     MPI_Barrier(comm2D);
 
-  
+
     printf("\n-------------------TIME STATISTICS----------------------\n");
     printf("STEPS are %d Average is %.3f\n", step, average);
     TIMER_stop(TIMER_TOTAL);

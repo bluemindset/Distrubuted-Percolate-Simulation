@@ -1,7 +1,9 @@
-//
-// Created by blue on 21/11/2019.
-//
-
+/**
+ * @Author: B159973
+ * @Date:	26/11/2019
+ * @Course: MPP - 2019
+ * @University of Edinburgh
+*/
 #ifndef MAP_H
 #define MAP_H
 
@@ -30,7 +32,7 @@ void update_outer_cells(int rank,int** smallmap_dims,int** old, int** new , int*
 
 
 
-void update_maps(int rank, int** smallmap_dims,int** old, int** new);
+long update_maps(int rank, int** smallmap_dims,int** old, int** new);
 
 void print_changes(int step, int* nchange, double average,int rank);
 
@@ -38,7 +40,5 @@ void update_small_map(int rank,int** smallmap, int** smallmap_dims,int** old);
 
 void find_bounds(int rank, bounds *b, int dims[2],configure* con);
 void write_map_file(int** map,configure* con);
-
-long map_sum(int rank,int** old,int** smallmap_dims);
 
 #endif

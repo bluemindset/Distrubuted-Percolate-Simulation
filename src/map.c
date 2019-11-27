@@ -1,3 +1,10 @@
+/**
+ * @Author: B159973
+ * @Date:   26/11/2019
+ * @Course: MPP - 2019
+ * @University of Edinburgh
+*/
+/*========================== Library Files ===========================*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <mpi.h>
@@ -6,11 +13,12 @@
 #include "arralloc.h"
 #include "configuration.h"
 #include "userInput.h"
-#include "percolate.h"
+#include "main.h"
 #include "timer.h"
 #include "arralloc.h"
 #include "allocs.h"
 #include "map.h"
+/*====================================================================*/
 
 void write_map_file(int** map,configure* con){
 
@@ -140,10 +148,8 @@ void start_halo_exchange(int rank, MPI_Request*  send_requests, MPI_Request*  re
     MPI_Issend(&old[smallmap_dims[rank][0]][1], 1, rowTypeN, down, 1, *comm2D, &send_requests[3]);
     MPI_Irecv(&old[0][1], 1, rowTypeN, up, 1, *comm2D, &recv_requests[2]);
     MPI_Irecv(&old[smallmap_dims[rank][0] + 1][1], 1, rowTypeN, down, 0, *comm2D, &recv_requests[3]);
-
-
-
 }
+
 void update_neighbors(int** old,int** new,int* nchange,int i ,int j){
     int oldval,newval;
 
@@ -166,10 +172,10 @@ void update_neighbors(int** old,int** new,int* nchange,int i ,int j){
     new[i][j] = newval;
 
 }
+
 void update_inner_cells(int rank, int** smallmap_dims,int** old,int** new,int *nchange){
 
     int i,j;
-
     for (i = 2; i <= smallmap_dims[rank][0] - 1; i++)
     {
         for (j = 2; j <= smallmap_dims[rank][1] - 1; j++)
@@ -184,7 +190,6 @@ void update_outer_cells(int rank,int** smallmap_dims,int** old, int** new , int*
     int i,j;
 
     i = 1;
-
     for (j = 1 ; j <= smallmap_dims[rank][1]; j++)
     {
         update_neighbors(old,new,nchange,i,j);
@@ -219,30 +224,19 @@ void update_outer_cells(int rank,int** smallmap_dims,int** old, int** new , int*
 }
 
 
-long map_sum(int rank,int** old,int** smallmap_dims){
-
-int i,j;
-long sum = 0 ; 
-
-    for(i=0; i<=smallmap_dims[rank][0]+1; i++)
-        for(j=0; j<=smallmap_dims[rank][1]+1; j++)
-            sum += old[i][j];
-
-return sum;
-
-}
-
-void update_maps(int rank, int** smallmap_dims,int** old, int** new){
+long update_maps(int rank, int** smallmap_dims,int** old, int** new){
 
     int i,j;
-
+    long sum =0;
     for (i = 1; i <= smallmap_dims[rank][0]; i++)
     {
         for (j = 1; j <= smallmap_dims[rank][1]; j++)
         {
+            sum += new[i][j];
             old[i][j] = new[i][j];
         }
     }
+    return sum;
 }
 
 
@@ -266,7 +260,6 @@ void update_small_map(int rank,int** smallmap, int** smallmap_dims,int** old){
             smallmap[i - 1][j - 1] = old[i][j];
         }
     }
-
 }
 
 

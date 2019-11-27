@@ -1,7 +1,7 @@
 /**
  * @Author: B159973
- * @Date:	15/10/2019
- * @Course: Programming Skills - 2019
+ * @Date:	26/11/2019
+ * @Course: MPP - 2019
  * @University of Edinburgh
 */
 #ifndef CONFIGURATION_H
@@ -18,7 +18,6 @@
  * @allowed_squares: 	The squares in the mapthat have a positive integer value.
  * @max_clusters: 		The maximum clusters the program will output,starting from the
  				  		largest one.
- * @dat_filename		The file name of the .dat type file.
  * @pgm_filename		The file name of the .pgm type file.
  ******************************************************************************/
 typedef struct
@@ -43,7 +42,6 @@ typedef struct
  * @allowed_squares: 	The squares in the mapthat have a positive integer value.
  * @max_clusters: 		The maximum clusters the program will output,starting from the
  				  		largest one.
- * @dat_filename		The file name of the .dat type file.
  * @pgm_filename		The file name of the .pgm type file.
  ******************************************************************************/
 void set_config(configure *con, int L, float rho, int seed, char *perc_file, int max_clusters);

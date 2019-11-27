@@ -1,7 +1,10 @@
-//
-// Created by blue on 21/11/2019.
-//
-
+/**
+ * @Author: B159973
+ * @Date:   26/11/2019
+ * @Course: MPP - 2019
+ * @University of Edinburgh
+*/
+/*========================== Library Files ===========================*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <mpi.h>
@@ -10,12 +13,14 @@
 #include "arralloc.h"
 #include "configuration.h"
 #include "userInput.h"
-#include "percolate.h"
+#include "main.h"
 #include "timer.h"
 #include "arralloc.h"
 #include "allocs.h"
 #include "gather.h"
 #include "map.h"
+/*====================================================================*/
+
 void gather_master(int size,int dims[N_DIMS],int**map,int** smallmap,
                    MPI_Comm* comm2D, configure* con, MPI_Request* requests,MPI_Status* status){
 

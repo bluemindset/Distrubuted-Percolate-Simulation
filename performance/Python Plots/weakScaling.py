@@ -8,16 +8,13 @@ from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,
                                AutoMinorLocator)
 
 
-
-
-
 labels = ["L:100", "L:400", "L:800", "L:1600","L:3200","L:6400"];
 runtimes = np.array([])
 speedup = np.array([])
 processes = np.array([1,4,8,16,32,64])
 
-weak= np.array([0.50,1.46,2.67, 5.61, 14.63,40.88])
-ideal= np.array([0.50,0.50,0.50, 0.50, 0.50,0.50])
+weak= np.array([0.49,1.46,2.67, 5.61, 14.63,40.88])
+ideal= np.array([0.49,0.49,0.49,0.49,0.49,0.49])
 
 
 fig = plt.figure()

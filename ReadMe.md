@@ -1,14 +1,11 @@
 
-##### Programming Skills 2019 - Semester 1
+##### Message Passing Programming 2019 - Semester 1
 ##### Student Exam Number: B159973
 ##### University of Edinburgh @ 2019- 2020
-# Percolate 
+# Parallel Percolate Implementation
 ## Assignment Introduction
 
-The program solves the following problem. Suppose we have a grid of squares which some are filled with a numbers and the rest are invalid. Using the uniform distribution, which is a distribution that has constant probability we can always output the same map. This is done by feeding the same seed in the constant probability. The probability function outputs a result that is checked with an input density.  After that a map is initialized based on the given seed. The program performs a loop which replaces each square with the maximum four neighbors and checks if the bottom row has a the same number with the top row. If this happens, then the program percolates, which means there is a line of available squares. The map is then written to a .dat file and later to a .pgm file via a special conversion. 
-
-
-Assignment pdf file can be found here [here](ext/ProgrammingSkillsCoursework.pdf).
+By employing message-passing parallel techniques and extensively use MPI tools, the percolate program must notrun successfully on multiple processes. The program description can be found [here](ext/MPP-coursework.pdf).
 
 ## Dependencies
 #### GCC Compiler

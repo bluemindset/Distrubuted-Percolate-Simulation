@@ -1,10 +1,9 @@
 #!/bin/bash
-
 #Author: B159973
-#For grapping step
-rho=0.5
-p=(2 4)
-grids=(5000)
+#Automated script for running on Cirrus
+# on proccess and grids below. 
+p=(1 2 4 8 16 32 64 100 140 160 200)
+grids=(100 400 800 1000 1600 3200 1000 5000 10000)
 rm results
 rm res.tsv
 
@@ -15,10 +14,10 @@ do
 	do 
 		echo -e "Setting grid to mpirun \"$type,$chunk\" \\n" >>results
 		printf "%s_%s_Total\t%s_%s_Update\n" "$l" "$pr" "$l" "$pr" >> res.tsv
-		for reps in {1..1}
+		for reps in {1..3}
 		do
 			echo -e "\n==================Start===================\n" >>results
-			mpirun -n $pr ./percolate  -l $l -m 1 -s 1564 -p map.pgm -r 0.5 > result
+			mpiexec_mpt -ppn 36 -n $pr ./percolate  -l $l -m 1 -s 1564 -p map.pgm -r 0.5 > result
 			cat result >> results
 
 			resultTotal=`awk '/RANK  0/&&/Total/{print $12}' result`

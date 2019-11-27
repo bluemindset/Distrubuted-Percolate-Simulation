@@ -1,7 +1,7 @@
 /**
  * @Author: B159973
- * @Date:	15/10/2019
- * @Course: Programming Skills - 2019
+ * @Date:	26/11/2019
+ * @Course: MPP - 2019
  * @University of Edinburgh
 */
 #ifndef VALIDATION_H

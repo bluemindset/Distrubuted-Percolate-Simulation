@@ -9,8 +9,6 @@ from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,
 
 
 
-
-
 labels = ["L:1000, rho:0.5","L:5000, rho:0.5","L:10000, rho:0.5","Ideal"];
 runtimes1 = np.array([0.02617,0.00684,0.00364,0.00203,0.00120,0.00085,0.00078,0.00073,0.00073,0.00078])
 runtimes2 = np.array([0.66124,0.16992,0.08736,0.04694,0.02661,0.01618,0.01289,0.01080,0.01044,0.01004])
@@ -21,6 +19,9 @@ runtimes1 = np.true_divide(0.02617, runtimes1)
 runtimes2 = np.true_divide(0.66124, runtimes2)
 runtimes3 = np.true_divide(2.63948, runtimes3)
 
+runtimes1 = np.true_divide(runtimes1, processes)
+runtimes2 = np.true_divide(runtimes2, processes)
+runtimes3 = np.true_divide(runtimes3, processes)
 
 fig, ax = plt.subplots() 
 
@@ -33,20 +34,20 @@ plt.plot(processes,processes,"o--",marker="*")
 plt.legend(labels)
 
 ax.set_xlim(left =0,right=210,auto=True)
-ax.set_ylim(bottom=0,top=205)
+ax.set_ylim(bottom=0,top=1)
 
 
 ax.xaxis.set_major_locator(MultipleLocator(10))
 ax.xaxis.set_minor_locator(MultipleLocator(5))
 
-ax.yaxis.set_major_locator(MultipleLocator(10))
-ax.yaxis.set_minor_locator(MultipleLocator(5))
+ax.yaxis.set_major_locator(MultipleLocator(0.1))
+ax.yaxis.set_minor_locator(MultipleLocator(0.05))
 
 
 ax.tick_params(which='minor', length=3, color='black',width=1)
 ax.tick_params(which='major', length=10, color='black',width=1.5)
 
-plt.ylabel( "Speed UP")
+plt.ylabel( "Efficiency")
 plt.xlabel("Number of Processes")
 ax.xaxis.set_major_locator(MultipleLocator(10))
 ax.xaxis.set_minor_locator(MultipleLocator(1))

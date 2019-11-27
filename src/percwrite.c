@@ -1,8 +1,16 @@
+/**
+ * @Author: B159973
+ * @Date: 26/11/2019
+ * @Course: MPP - 2019
+ * @University of Edinburgh
+*/
+
+/*========================== Library Files ===========================*/
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "percolate.h"
+#include "main.h"
 #include "percwrite.h"
+/*====================================================================*/
 
 /*
  *  Function to write a percolation map in greyscale Portable Grey Map

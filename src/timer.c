@@ -13,7 +13,7 @@
 #include "timer.h"
 /*====================================================================*/
 
-#define NUM_TIMERS 2
+
 
 struct timer_s
 {
@@ -31,7 +31,7 @@ static const char *timer_name[] = {"Total Time", "Update Time"};
 int t_init()
 {
     int n;
-    for (n = 0; n < TIMERS; n++)
+    for (n = 0; n < NUM_TIMERS; n++)
     {
         timer[n]._start  = 0.0;
         timer[n]._sum  = 0.0;
@@ -70,7 +70,7 @@ void t_dump( MPI_Comm comm, int rank, int size, int steps)
     int    n;
     double _elapsed, t_min, t_max, t_avg, t_step;
 
-    for (n = 0; n < TIMERS; n++)
+    for (n = 0; n < NUM_TIMERS; n++)
     {
         if ( timer[n].alive == 0 )
         {

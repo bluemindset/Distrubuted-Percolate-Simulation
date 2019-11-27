@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
     /***************************************************SCATTER********************************************************/
     if (rank == MASTER)
     {
-        init_rank_zero(&con, smallmap, smallmap_dims, map, dims, &b);
+        init_smallmap(&con, smallmap, smallmap_dims, map, dims, &b);
         scatter_master(size, dims, &con, map, &comm2D, requests, status, &b);
     }
     else
@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
     if (rank == MASTER)
     {
         gather_master(size, dims, map, smallmap, &comm2D, &con, requests, status);
-        write_map_file(map, &con);
+        percolation_check(map, &con);
         percwrite("map.pgm", map, con.L, con.max_clusters);
     }
     else

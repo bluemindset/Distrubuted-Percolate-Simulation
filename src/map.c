@@ -20,12 +20,8 @@
 #include "map.h"
 /*====================================================================*/
 
-void write_map_file(int** map,configure* con){
+void percolation_check(int** map,configure* con){
 
-    /*
-         *  Test to see if percolation occurred by looking for positive numbers
-         *  that appear on both the top and bottom edges
-         */
    int itop,ibot ,perc = 0;
 
     for (itop = 0; itop < con->L; itop++)
@@ -49,8 +45,6 @@ void write_map_file(int** map,configure* con){
     {
         printf("percolate: cluster DOES NOT percolate\n");
     }
-
-
 }
 
 void init_density(configure* con,int **map,int *nhole){
@@ -77,7 +71,7 @@ void init_density(configure* con,int **map,int *nhole){
            con->rho, 1.0 - ((double) *nhole) / ((double) con->L * con->L) );
 }
 
-void init_rank_zero(configure *con,int** smallmap,int** smallmap_dims,int** map,int dims[N_DIMS],bounds* b){
+void init_smallmap(configure *con,int** smallmap,int** smallmap_dims,int** map,int dims[N_DIMS],bounds* b){
 
     int i,j;
 
@@ -134,6 +128,7 @@ void start_halo_exchange(int rank, MPI_Request*  send_requests, MPI_Request*  re
     MPI_Type_vector(smallmap_dims[rank][0], 1, smallmap_dims[rank][1] + 2, MPI_INT, &colTypeN);
     MPI_Type_vector(1, smallmap_dims[rank][1], smallmap_dims[rank][1] + 2, MPI_INT, &rowTypeN);
 
+    printf("Rank %d left: %d,up: %d",rank,left,up);
     MPI_Type_commit(&colTypeN);
     MPI_Type_commit(&rowTypeN);
 
@@ -168,9 +163,7 @@ void update_neighbors(int** old,int** new,int* nchange,int i ,int j){
             ++(*nchange);
         }
     }
-
     new[i][j] = newval;
-
 }
 
 void update_inner_cells(int rank, int** smallmap_dims,int** old,int** new,int *nchange){
@@ -185,7 +178,6 @@ void update_inner_cells(int rank, int** smallmap_dims,int** old,int** new,int *n
     }
 }
 
-
 void update_outer_cells(int rank,int** smallmap_dims,int** old, int** new , int* nchange){
     int i,j;
 
@@ -194,8 +186,8 @@ void update_outer_cells(int rank,int** smallmap_dims,int** old, int** new , int*
     {
         update_neighbors(old,new,nchange,i,j);
     }
-/*************************************************************************/
 
+/*************************************************************************/
     i = smallmap_dims[rank][0];
 
     for (j = 1 ; j <= smallmap_dims[rank][1]; j++)
@@ -204,7 +196,6 @@ void update_outer_cells(int rank,int** smallmap_dims,int** old, int** new , int*
     }
 
 /*************************************************************************/
-
     j = smallmap_dims[rank][1];
 
     for (i = 1 ; i <= smallmap_dims[rank][0]; i++)
@@ -212,9 +203,7 @@ void update_outer_cells(int rank,int** smallmap_dims,int** old, int** new , int*
         update_neighbors(old,new,nchange,i,j);
     }
 
-
 /*************************************************************************/
-
     j = 1;
 
     for (i = 1 ; i <= smallmap_dims[rank][0]; i++)
@@ -222,7 +211,6 @@ void update_outer_cells(int rank,int** smallmap_dims,int** old, int** new , int*
         update_neighbors(old,new,nchange,i,j);
     }
 }
-
 
 long update_maps(int rank, int** smallmap_dims,int** old, int** new){
 

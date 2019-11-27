@@ -8,12 +8,12 @@
 typeset -A con
 #DEFAULT values.If not specifing in the perc.conf the value that you want.
 con=( 
-    [size_l]=50
-    [rho]=0.5
-    [seed]=288
-    [max_clusters]=50
-    [pgm_file]=map.pgm
     [nproc]=1
+    [size_l]=288
+    [rho]=0.411
+    [seed]=1564
+    [max_clusters]=1
+    [pgm_file]=map.pgm
 )
 
 while read ln

@@ -128,17 +128,16 @@ void start_halo_exchange(int rank, MPI_Request*  send_requests, MPI_Request*  re
     MPI_Type_vector(smallmap_dims[rank][0], 1, smallmap_dims[rank][1] + 2, MPI_INT, &colTypeN);
     MPI_Type_vector(1, smallmap_dims[rank][1], smallmap_dims[rank][1] + 2, MPI_INT, &rowTypeN);
 
-    printf("Rank %d left: %d,up: %d",rank,left,up);
     MPI_Type_commit(&colTypeN);
     MPI_Type_commit(&rowTypeN);
 
-    /*Right and left neighbors*/
+    /*Right and left neighbors, mind the tags*/
     MPI_Issend(&old[1][smallmap_dims[rank][1]], 1, colTypeN, right, 1, *comm2D, &send_requests[0]);
     MPI_Issend(&old[1][1], 1, colTypeN, left, 0, *comm2D, &send_requests[1]);
     MPI_Irecv(&old[1][0], 1, colTypeN, left, 1, *comm2D, &recv_requests[0]);
     MPI_Irecv(&old[1][smallmap_dims[rank][1] + 1], 1, colTypeN, right, 0, *comm2D, &recv_requests[1]);
 
-    /*Up and down neighbors*/
+    /*Up and down neighbors, mind the tags*/
     MPI_Issend(&old[1][1], 1, rowTypeN, up, 0, *comm2D, &send_requests[2]);
     MPI_Issend(&old[smallmap_dims[rank][0]][1], 1, rowTypeN, down, 1, *comm2D, &send_requests[3]);
     MPI_Irecv(&old[0][1], 1, rowTypeN, up, 1, *comm2D, &recv_requests[2]);

@@ -1,4 +1,10 @@
 #!/bin/bash
+
+# @Author: B159973
+# @Date:   26/11/2019
+# @Course: MPP - 2019
+# @University of Edinburgh
+
 # Testing Serial and Parallel versions
 
 # From 1 to 32 proccesses the below configuration 

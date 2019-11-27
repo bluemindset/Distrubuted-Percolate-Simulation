@@ -1,4 +1,10 @@
-#B159973 - Programming Skills - 2019
+#!/bin/bash
+
+# @Author: B159973
+# @Date:   26/11/2019
+# @Course: MPP - 2019
+# @University of Edinburgh
+
 include config.mk
 
 .PHONY: all

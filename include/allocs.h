@@ -21,37 +21,6 @@
  * @return:		 Nothing
  ******************************************************************************/
 void alloc_str(char **p_str, const int size);
-/***************************************************************************//**
- * If the allocation of the memory fails then return an error message
- * and exit the program unsuccessfully.
- *
- * @param p_int: A pointer to a pointer to a 4 byte integer memory location.
- *				 This double pointer is used to allocate an array of
- *				 integers and point to that array of integers.
- * @return:		 Nothing
- *
- ******************************************************************************/
-void check_int_list(int *p_int);
 
-
-/***************************************************************************//**
- * If the allocation of the memory fails then return an error message
- * and exit the program unsuccessfully.
- *
- * @param p_map: A pointer to a pointer to a pointer on a 4 byte integer
- * 				 memory location.
- *				 This double pointer is used to allocate a 2D dynamic array of
- *				 integers.
- * @return:		 Nothing
- ******************************************************************************/
-void check_map(int **p_map);
-
-/***************************************************************************//**
- * Deallocate successfully any pointers that are 
- *
- * @param p_mem ...: The pointer to be free from memory.
- * @return:		 Nothing
- ******************************************************************************/
-void dealloc(void *p_mem, ...);
 
 #endif

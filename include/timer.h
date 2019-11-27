@@ -15,15 +15,15 @@
 /***************************************************************************//**
  * Initialize all the timers to be zero.
  ******************************************************************************/
-int TIMER_init();
+int t_init();
 /***************************************************************************//**
 * Start the selected timer, either TOTAL or UPDATE (check report)
  ******************************************************************************/
-void TIMER_start(const int);
+void t_start(const int);
 /***************************************************************************//**
 * Stop the selected timer, either TOTAL or UPDATE (check report)
  ******************************************************************************/
-void TIMER_stop(const int);
+void t_stop(const int);
 /***************************************************************************//**
 * Dump all the timings into the screen output
 * @comm  		The communicator to use for selecting the timers.
@@ -31,8 +31,11 @@ void TIMER_stop(const int);
 * @size 		Number of all the processes.
 * @steps		The number of steps of the update loop. 
  ******************************************************************************/
-void TIMER_dump( MPI_Comm comm, int rank, int size,int steps);
+void t_dump( MPI_Comm comm, int rank, int size,int steps);
 
+/***************************************************************************//**
+ * Timers for measuring the whole program time and for the update section 
+ ******************************************************************************/
 enum timer_id {TIMER_TOTAL = 0,
 	       		TIMER_UPDATE =1
 };

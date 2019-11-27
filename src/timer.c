@@ -42,7 +42,7 @@ int t_init()
     return 0;
 }
 
-void _start(const int t_id)
+void t_start(const int t_id)
 {
     timer[t_id]._start = MPI_Wtime();
     timer[t_id].alive  = 1;
